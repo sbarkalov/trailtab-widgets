@@ -1,0 +1,18 @@
+{
+  "connect": [
+    "api.wikimedia.org",
+    "collectionapi.metmuseum.org",
+    "en.wiktionary.org",
+    "images-api.nasa.gov",
+    "openaccess-api.clevelandart.org",
+    "wttr.in"
+  ],
+  "img": [
+    "fastly.picsum.photos",
+    "images-assets.nasa.gov",
+    "images.metmuseum.org",
+    "openaccess-cdn.clevelandart.org",
+    "picsum.photos",
+    "thumb.wikimedia.org"
+  ]
+}

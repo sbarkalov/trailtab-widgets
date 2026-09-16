@@ -1,0 +1,14 @@
+{
+  "name": "trailtab-widgets",
+  "private": true,
+  "description": "Community widgets for the TrailTab new tab",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/library.mjs build",
+    "check": "node scripts/library.mjs check",
+    "test": "node --test scripts/*.test.mjs"
+  }
+}

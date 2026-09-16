@@ -1,0 +1,225 @@
+// The rules a widget is held to before it can be listed.
+//
+// Two audiences read these results and they need different things. The
+// extension re-checks shape, size and digest on every refresh and refuses what
+// fails — so those checks here are a courtesy, telling an author in a pull
+// request what the extension would otherwise tell nobody. The contacts checks
+// are different: the extension cannot perform them at all, because it never
+// reads a payload's code. Here is the only place they happen before a reviewer.
+//
+// Pure functions over strings, so every rule is testable without a filesystem.
+
+import { createHash } from 'node:crypto'
+
+/** Mirrors `MAX_WIDGET_BYTES` in the extension. The whole file, comments included. */
+export const MAX_WIDGET_BYTES = 8 * 1024
+
+/** The fields `widget.json` may carry. Anything else is a typo or a wish. */
+const META_FIELDS = new Set(['id', 'title', 'version', 'interactive', 'contacts', 'rotatable'])
+
+/**
+ * Fields the extension accepts and ignores. Refused here rather than passed
+ * through: an author who sets one expects it to do something, and the panel's
+ * box is not negotiable.
+ */
+const INERT_FIELDS = new Set(['aspect', 'minExpandedHeight'])
+
+const ID = /^[a-z0-9]+(-[a-z0-9]+)*$/
+const VERSION = /^\d+\.\d+\.\d+$/
+// A bare hostname: what the consent tooltip shows and what `source()` links
+// are matched against. A scheme or a path here would never match anything.
+const HOST = /^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
+
+/** Problems with a widget's declaration. An empty list means it passed. */
+export function checkMeta(meta, dirName) {
+  const problems = []
+  if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
+    return ['widget.json must be an object']
+  }
+  for (const key of Object.keys(meta)) {
+    if (INERT_FIELDS.has(key)) {
+      problems.push(`"${key}" does nothing: the panel draws every widget at its published size`)
+    } else if (!META_FIELDS.has(key)) {
+      problems.push(`unknown field "${key}"`)
+    }
+  }
+  if (typeof meta.id !== 'string' || !ID.test(meta.id)) {
+    problems.push('"id" must be lowercase letters, digits and single hyphens')
+  } else if (meta.id !== dirName) {
+    // One name for one thing: the directory is what a reviewer sees in the
+    // diff, the id is what the cache remembers.
+    problems.push(`"id" is "${meta.id}" but the directory is "${dirName}"`)
+  }
+  if (typeof meta.title !== 'string' || meta.title.trim() === '') {
+    problems.push('"title" must be a non-empty string')
+  }
+  if (typeof meta.version !== 'string' || !VERSION.test(meta.version)) {
+    problems.push('"version" must be MAJOR.MINOR.PATCH')
+  }
+  if (typeof meta.interactive !== 'boolean') {
+    problems.push('"interactive" must be true or false')
+  }
+  if (meta.rotatable !== undefined && typeof meta.rotatable !== 'boolean') {
+    problems.push('"rotatable", if present, must be true or false')
+  }
+  // Absent is not an answer; null is. And the extension still reads a bare
+  // string for widgets published before lists existed, but nothing new needs
+  // that spelling, so here there is one.
+  if (!('contacts' in meta)) {
+    problems.push('"contacts" is required — write null if the widget reaches nothing')
+  } else if (meta.contacts !== null) {
+    if (!Array.isArray(meta.contacts) || meta.contacts.length === 0) {
+      problems.push('"contacts" must be null or a non-empty list of hostnames')
+    } else {
+      for (const h of meta.contacts) {
+        if (typeof h !== 'string' || !HOST.test(h)) problems.push(`"${h}" is not a bare hostname`)
+      }
+      if (new Set(meta.contacts).size !== meta.contacts.length) {
+        problems.push('"contacts" lists a host twice')
+      }
+    }
+  }
+  return problems
+}
+
+/**
+ * Every host written into the source as an absolute http(s) address.
+ *
+ * This finds what is spelled out and nothing that is assembled — a host built
+ * by concatenation is invisible to it. That is a limit stated rather than
+ * worked around: a widget that hides where it goes is one the reviewer refuses,
+ * and the CSP allowlist stops it reaching anywhere unlisted regardless.
+ */
+export function hostsIn(source) {
+  const hosts = new Set()
+  // Namespace names are identifiers that happen to be spelled as addresses:
+  // `createElementNS('http://www.w3.org/2000/svg', …)` fetches nothing. Only
+  // the exact namespace forms are excused, so a real request to the host is
+  // still caught.
+  const unNamespaced = source.replace(
+    /https?:\/\/www\.w3\.org\/(2000\/svg|1999\/xhtml|1999\/xlink|1998\/Math\/MathML)\b/g,
+    '',
+  )
+  for (const m of unNamespaced.matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
+    hosts.add(m[1].toLowerCase().replace(/\.$/, ''))
+  }
+  return [...hosts].sort()
+}
+
+/**
+ * Problems with the source file itself, checked against its declaration and
+ * against what the extension currently permits.
+ *
+ * Returns `problems`, which fail the check, and `notes`, which a reviewer
+ * reads. A host outside the allowlist is a note, not a failure: a page the
+ * widget only links to through `TrailTabWidget.source()` belongs in `contacts`
+ * and never in the allowlist, and no reading of the code can tell a link from a
+ * fetch reliably.
+ */
+export function checkSource(source, meta, allowlist, bytes) {
+  const problems = []
+  const notes = []
+
+  if (bytes.length > MAX_WIDGET_BYTES) {
+    problems.push(`${bytes.length} bytes; the limit is ${MAX_WIDGET_BYTES}, comments included`)
+  }
+  // The extension hashes `TextEncoder(response.text())`, not the raw bytes. A
+  // byte-order mark or an invalid sequence survives on disk and not through
+  // that round trip, so the digest published here would never match.
+  if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    problems.push('starts with a byte-order mark, which the extension strips before hashing')
+  }
+  if (!Buffer.from(new TextDecoder().decode(bytes)).equals(Buffer.from(bytes))) {
+    problems.push('is not valid UTF-8')
+  }
+  // The shell runs the payload as a script. Markup is a syntax error there and
+  // shows as an empty frame, which is the most confusing way to learn this.
+  if (/^\s*</.test(source)) {
+    problems.push('looks like HTML; a library widget is JavaScript that builds its own page')
+  }
+
+  const found = hostsIn(source)
+  const declared = meta.contacts ?? []
+  for (const h of found) {
+    if (!declared.includes(h)) problems.push(`reaches ${h}, which "contacts" does not declare`)
+  }
+  // The other direction too: a declared address the widget never uses puts a
+  // host in front of the user at consent time for no reason.
+  for (const h of declared) {
+    if (!found.includes(h)) problems.push(`declares ${h}, which the source never names`)
+  }
+  const permitted = new Set([...allowlist.connect, ...allowlist.img])
+  for (const h of found) {
+    if (!permitted.has(h)) {
+      notes.push(
+        `${h} is not on the extension's allowlist: fine only as a link target passed to source(); a fetch or image there will be blocked`,
+      )
+    }
+  }
+  return { problems, notes }
+}
+
+/** Lowercase hex, computed the way the extension computes it. */
+export function sha256Hex(bytes) {
+  const text = new TextDecoder().decode(bytes)
+  return createHash('sha256').update(new TextEncoder().encode(text)).digest('hex')
+}
+
+/** One listing entry, fields in a fixed order so the file diffs cleanly. */
+export function listingEntry(meta, file, bytes) {
+  const entry = {
+    id: meta.id,
+    title: meta.title,
+    version: meta.version,
+    file,
+    sha256: sha256Hex(bytes),
+    interactive: meta.interactive,
+    contacts: meta.contacts,
+  }
+  if (meta.rotatable !== undefined) entry.rotatable = meta.rotatable
+  return entry
+}
+
+export function renderListing(entries) {
+  const sorted = [...entries].sort((a, b) => a.id.localeCompare(b.id))
+  return JSON.stringify({ widgets: sorted }, null, 2) + '\n'
+}
+
+/**
+ * Problems with a change to an already-listed widget, against the listing at
+ * the base of the pull request.
+ *
+ * The extension keeps a cached widget until its version changes, so new bytes
+ * under an old version would reach nobody who already holds it — and would
+ * make one version name two different programs.
+ */
+export function checkAgainstBase(entries, baseEntries) {
+  const problems = []
+  const base = new Map(baseEntries.map((e) => [e.id, e]))
+  for (const e of entries) {
+    const was = base.get(e.id)
+    if (!was) continue
+    if (was.sha256 !== e.sha256 && was.version === e.version) {
+      problems.push(`${e.id}: the code changed but the version is still ${e.version}`)
+    }
+    if (was.sha256 === e.sha256 && was.version !== e.version) {
+      problems.push(`${e.id}: the version moved to ${e.version} but the code did not change`)
+    }
+  }
+  return problems
+}
+
+/** The two source lists out of the extension's sandbox CSP. */
+export function allowlistFromCsp(csp) {
+  const directive = (name) => {
+    const m = csp.match(new RegExp(`(?:^|;)\\s*${name}\\s+([^;]*)`))
+    if (!m) return []
+    return m[1]
+      .trim()
+      .split(/\s+/)
+      .filter((s) => s.startsWith('https://'))
+      .map((s) => new URL(s).hostname)
+      .sort()
+  }
+  return { connect: directive('connect-src'), img: directive('img-src') }
+}

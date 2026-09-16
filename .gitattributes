@@ -1,0 +1,3 @@
+# The digest in library.json is over the bytes as committed. A line-ending
+# conversion on checkout would make a local build disagree with the CDN.
+* text=auto eol=lf
