@@ -1,0 +1,26 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The version rule compares against the listing at the base of the
+          # pull request, so that commit has to be present.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Check widgets against the base listing
+        if: github.event_name == 'pull_request'
+        run: node scripts/library.mjs check --base "origin/${{ github.base_ref }}"
+      - name: Check widgets
+        if: github.event_name != 'pull_request'
+        run: node scripts/library.mjs check
