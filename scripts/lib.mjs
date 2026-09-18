@@ -30,6 +30,33 @@ const VERSION = /^\d+\.\d+\.\d+$/
 // are matched against. A scheme or a path here would never match anything.
 const HOST = /^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 
+/**
+ * Why an id is not one a person can read, or null if it is.
+ *
+ * The id is permanent — changing it makes a different widget as far as every
+ * cache is concerned — and it is what a maintainer, an issue and a diagnostic
+ * log call the widget. So it should say what the widget shows. Whether it
+ * *does* is for review; this refuses only the shapes that plainly cannot:
+ * serial numbers, versions, hashes, and words that describe every widget.
+ */
+export function idProblem(id) {
+  if (id.length < 3 || id.length > 40) return 'must be 3 to 40 characters'
+  if (!/^[a-z]/.test(id)) return 'must start with a letter'
+  const parts = id.split('-')
+  // A version or a date in the id would have to change when the widget does,
+  // and the id is the one thing that must not.
+  if (parts.some((p) => /^v?\d+$/.test(p))) {
+    return 'must not contain a number, version or date — the id outlives them'
+  }
+  if (parts.some((p) => p.length >= 8 && /\d/.test(p) && /^[0-9a-f]+$/.test(p))) {
+    return 'looks like a hash; name what the widget shows'
+  }
+  const generic = ['widget', 'test', 'my', 'new', 'demo', 'untitled']
+  const found = parts.find((p) => generic.includes(p))
+  if (found) return `must not use "${found}": it says nothing about this widget`
+  return null
+}
+
 /** Problems with a widget's declaration. An empty list means it passed. */
 export function checkMeta(meta, dirName) {
   const problems = []
@@ -45,6 +72,8 @@ export function checkMeta(meta, dirName) {
   }
   if (typeof meta.id !== 'string' || !ID.test(meta.id)) {
     problems.push('"id" must be lowercase letters, digits and single hyphens')
+  } else if (idProblem(meta.id)) {
+    problems.push(`"id" ${idProblem(meta.id)}`)
   } else if (meta.id !== dirName) {
     // One name for one thing: the directory is what a reviewer sees in the
     // diff, the id is what the cache remembers.

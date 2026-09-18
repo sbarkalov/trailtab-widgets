@@ -7,6 +7,7 @@ import {
   checkMeta,
   checkSource,
   hostsIn,
+  idProblem,
   listingEntry,
   sha256Hex,
 } from './lib.mjs'
@@ -38,6 +39,19 @@ test('contacts must be stated, and null is the statement of nothing', () => {
 test('the id is the directory', () => {
   assert.match(checkMeta(meta(), 'watch').join(), /directory/)
   assert.match(checkMeta(meta({ id: 'Clock' }), 'Clock').join(), /lowercase/)
+})
+
+test('an id says what the widget shows', () => {
+  for (const ok of ['moon-phase', 'word-of-the-day', 'sudoku', 'tide-times']) {
+    assert.equal(idProblem(ok), null, ok)
+  }
+  assert.match(idProblem('w1'), /3 to 40/)
+  assert.match(idProblem('clock-2'), /number/)
+  assert.match(idProblem('weather-v2'), /number/)
+  assert.match(idProblem('moon-2026'), /number/)
+  assert.match(idProblem('a8f3c2d1e9'), /hash/)
+  assert.match(idProblem('weather-widget'), /"widget"/)
+  assert.match(idProblem('my-clock'), /"my"/)
 })
 
 test('fields that do nothing are refused rather than ignored', () => {

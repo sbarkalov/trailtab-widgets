@@ -30,7 +30,7 @@ The frame is **640 × 320**, or **360 × 180** on a narrow window — both 2:1, 
 
 ```json
 {
-  "id": "moon",
+  "id": "moon-phase",
   "title": "The moon tonight",
   "version": "1.0.0",
   "interactive": false,
@@ -40,12 +40,23 @@ The frame is **640 × 320**, or **360 × 180** on a narrow window — both 2:1, 
 
 | Field | Required | Meaning |
 |---|---|---|
-| `id` | yes | Lowercase, hyphenated; the same as the directory. Stable across versions. |
+| `id` | yes | What the widget shows, in plain English words: `moon-phase`, `word-of-the-day`, `tide-times`. Lowercase, hyphenated, the same as the directory. **Permanent** — see below. |
 | `title` | yes | The name shown with the frame. |
 | `version` | yes | `MAJOR.MINOR.PATCH`. **Bump it whenever `widget.js` changes** — a cached widget is kept until its version moves, so new code under an old version reaches nobody who already has it. The check enforces this in both directions. |
 | `interactive` | yes | `true` if it wants the keyboard once activated. It does not affect whether it is drawn. |
 | `contacts` | yes | **Every** host the widget can put the user in front of — fetched, drawn as an image, or linked to through `source()`. `null` if it reaches nothing. It is what the user is shown before consenting. |
 | `rotatable` | no | `false` keeps it out of the random draw — for a widget the draw would spoil: session state, metered cost, slowness. Never because it is interactive. |
+
+### Choosing the id
+
+The `title` is what users read, and it can change freely. The `id` is what everyone else reads — maintainers, issues, diagnostic logs, the directory in a diff — and it can **never** change: the extension's cache and rotation know a widget by its id, so a renamed widget is a new widget and the old one silently drops out. Pick it once, and pick one that tells a stranger what they will see.
+
+- Name the content, not the kind of thing: `moon-phase`, not `astronomy`; `tide-times`, not `ocean-widget`.
+- No numbers, versions or dates (`clock-2`, `weather-v2`, `quote-2026`) — `version` is where change goes, and the id outlives it.
+- No words that describe every widget: `widget`, `my`, `new`, `test`, `demo`, `untitled`.
+- No author or brand prefix: the id is the widget's name, not a namespace.
+
+The check refuses the shapes that plainly cannot be read (the numbers, hashes and generic words above, anything under 3 or over 40 characters). Whether the id actually says what the widget shows is decided in review, and a pull request may be asked to rename before it merges — the last moment a rename is free.
 
 Write `contacts` honestly and completely. The check compares it with every absolute `http(s)://` address in your file, both ways: an address you use but did not declare fails, and so does one you declared but never use. An address assembled by concatenation is invisible to the check and will be refused in review for exactly that reason.
 

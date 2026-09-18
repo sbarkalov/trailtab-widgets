@@ -1,10 +1,10 @@
 {
   "widgets": [
     {
-      "id": "moon",
+      "id": "moon-phase",
       "title": "The moon tonight",
       "version": "1.0.0",
-      "file": "widgets/moon/widget.js",
+      "file": "widgets/moon-phase/widget.js",
       "sha256": "63a7f15d1885d555c09fe6fd2c76fa1d712685caae2505efe1adf41b24661593",
       "interactive": false,
       "contacts": null
