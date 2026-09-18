@@ -32,3 +32,7 @@ npm run check    # check without writing; what CI runs
 npm test         # the check's own tests
 node scripts/library.mjs allowlist <path/to/trailtab/public/manifest.json>
 ```
+
+## License
+
+[MIT](LICENSE). By opening a pull request you agree that your widget is published under it. The license covers the code only: images, text and data a widget shows remain under the terms of wherever they come from.

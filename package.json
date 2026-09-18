@@ -1,6 +1,7 @@
 {
   "name": "trailtab-widgets",
   "private": true,
+  "license": "MIT",
   "description": "Community widgets for the TrailTab new tab",
   "type": "module",
   "engines": {
