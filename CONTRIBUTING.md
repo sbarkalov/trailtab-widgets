@@ -83,4 +83,4 @@ The check refuses what can be decided mechanically. A maintainer reads the whole
 
 ## After it merges
 
-It is not live yet. The extension reads this repository at a pinned commit, and your widget reaches people with the release that moves the pin past your merge. Even then it is drawn only for people who switched on Community widgets, and the cache rotates, so it takes turns with everything else in the library.
+It is not live yet. The extension follows `pin.json`, which names the state it reads, and a maintainer moves it — so your widget reaches people when the pin moves past your merge, which is a commit here rather than an extension release. Allow up to a day after that: the pin is read on the library's daily schedule and the CDN serves it from an edge cache for twelve hours. Even then it is drawn only for people who switched on Community widgets, and the cache rotates, so it takes turns with everything else in the library.

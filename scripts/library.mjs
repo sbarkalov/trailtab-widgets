@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // node scripts/library.mjs build             — regenerate library.json
-// node scripts/library.mjs check [--base R]  — verify every widget and the listing
+// node scripts/library.mjs check [--base R]  — verify every widget, the listing and the pin
+// node scripts/library.mjs publish            — move pin.json to the current commit
 // node scripts/library.mjs allowlist <manifest.json> — refresh allowlist.json
 //
 // `library.json` is generated, never written by hand: a digest typed by a
@@ -24,6 +25,7 @@ const ROOT = new URL('..', import.meta.url).pathname
 const WIDGETS = join(ROOT, 'widgets')
 const LISTING = join(ROOT, 'library.json')
 const ALLOWLIST = join(ROOT, 'allowlist.json')
+const PIN = join(ROOT, 'pin.json')
 
 // One page and its declaration. A second file of the widget's own is refused
 // whatever its size: the byte limit and the one-file rule only mean something
@@ -115,6 +117,11 @@ function check(baseRef) {
     }
   }
 
+  for (const p of checkPin()) {
+    failed = true
+    console.log(`✗ pin: ${p}`)
+  }
+
   if (baseRef) {
     let base = null
     try {
@@ -135,6 +142,64 @@ function check(baseRef) {
   console.log('\nall widgets pass')
 }
 
+const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim()
+
+/**
+ * The pin is the one file whose mistakes reach every user at once: the
+ * extension follows it before it reads anything else, so a pin naming a state
+ * that is not there is the whole library going quiet.
+ *
+ * A pin naming a commit that is not an ancestor of this branch is the
+ * dangerous case rather than the obviously broken one — such a commit can
+ * exist, can resolve on the CDN, and is a state nobody reviewed here.
+ */
+function checkPin() {
+  let pin
+  try {
+    pin = JSON.parse(readFileSync(PIN, 'utf8'))
+  } catch (e) {
+    return [`pin.json does not parse: ${e.message}`]
+  }
+  if (!/^[0-9a-f]{40}$/.test(pin.commit ?? '')) {
+    return ['pin.json "commit" must be a full 40-character commit hash']
+  }
+  const problems = []
+  try {
+    git('merge-base', '--is-ancestor', pin.commit, 'HEAD')
+  } catch {
+    problems.push(`pin.json names ${pin.commit.slice(0, 7)}, which is not an ancestor of HEAD`)
+  }
+  // The listing at that commit is what the extension will read. A pin at a
+  // commit from before the listing existed, or at one whose listing was
+  // hand-edited into invalid JSON, publishes nothing at all.
+  try {
+    const listed = JSON.parse(git('show', `${pin.commit}:library.json`))
+    if (!Array.isArray(listed.widgets)) problems.push('the listing at that commit has no widgets')
+  } catch {
+    problems.push(`library.json at ${pin.commit.slice(0, 7)} is missing or does not parse`)
+  }
+  return problems
+}
+
+/**
+ * Names the current commit — the act that publishes.
+ *
+ * The pin therefore never names the commit that contains it, and cannot: the
+ * pin is written before the commit it would have to name exists. What it names
+ * is the state whose widgets are being published, which is the state before
+ * this one.
+ */
+function publish() {
+  const commit = git('rev-parse', 'HEAD')
+  const pin = JSON.parse(readFileSync(PIN, 'utf8'))
+  writeFileSync(
+    PIN,
+    JSON.stringify({ ...pin, commit, movedAt: new Date().toISOString() }, null, 2) + '\n',
+  )
+  console.log(`pin.json now names ${commit}`)
+  console.log('Commit it — committing is what publishes that state.')
+}
+
 function allowlist(manifestPath) {
   if (!manifestPath) {
     console.error('usage: library.mjs allowlist <path to the extension manifest.json>')
@@ -153,8 +218,9 @@ function allowlist(manifestPath) {
 const [command, ...rest] = process.argv.slice(2)
 if (command === 'build') build()
 else if (command === 'check') check(rest[0] === '--base' ? rest[1] : undefined)
+else if (command === 'publish') publish()
 else if (command === 'allowlist') allowlist(rest[0])
 else {
-  console.error('usage: library.mjs build | check [--base <ref>] | allowlist <manifest.json>')
+  console.error('usage: library.mjs build | check [--base <ref>] | publish | allowlist <manifest.json>')
   process.exit(2)
 }

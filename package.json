@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node scripts/library.mjs build",
     "check": "node scripts/library.mjs check",
+    "publish": "node scripts/library.mjs publish",
     "test": "node --test scripts/*.test.mjs"
   }
 }
