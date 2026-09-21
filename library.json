@@ -3,9 +3,9 @@
     {
       "id": "moon-phase",
       "title": "The moon tonight",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "file": "widgets/moon-phase/widget.js",
-      "sha256": "63a7f15d1885d555c09fe6fd2c76fa1d712685caae2505efe1adf41b24661593",
+      "sha256": "89cd07ad2eaa2a0f2dda5dd5791abe25909e0c8df94ce0443a709dbab5f0ef92",
       "interactive": false,
       "contacts": null
     }

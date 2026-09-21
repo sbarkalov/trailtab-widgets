@@ -20,10 +20,10 @@ The shell is dark-on-transparent: `body` has a transparent background, `color: #
 
 The frame is **640 × 320**, or **360 × 180** on a narrow window — both 2:1, same layout scaled. Size in viewport units (`vh`, `vw`) or read `innerWidth`/`innerHeight` on `resize`. The hero clips and does not scroll: what does not fit is gone.
 
-### Lifecycle — read this, it differs from the built-in widgets
+### Lifecycle
 
-- **`TrailTabWidget.onInit` does not fire for a library widget.** The shell answers `init` before your file is delivered. Start drawing at the top level of your script.
-- `onExpand(fn)` / `onCollapse(fn)` fire when the user activates your widget and when it loses the keyboard.
+- **Start from `TrailTabWidget.onInit(fn)`.** It is called with `{ width, height }` — at once if the panel has already said so, which is always the case for a library widget, whose code is delivered after the shell answered that message. Drawing at the top level works too, but `onInit` is the one way that is right for every widget.
+- `onExpand(fn)` / `onCollapse(fn)` fire when the user activates your widget and when it loses the keyboard. They are **not** replayed: they report a moment, so one that passed before your code arrived is not announced to it.
 - **If you take the keyboard, release it on Escape** with `TrailTabWidget.releaseFocus()`.
 
 ## `widget.json`

@@ -7,7 +7,7 @@
 **Checklist**
 
 - [ ] `npm run build` and `npm test` pass, and the regenerated `library.json` is committed
-- [ ] It is one JavaScript file, not an HTML page, and does not rely on `onInit`
+- [ ] It is one JavaScript file, not an HTML page, and it draws from `TrailTabWidget.onInit`
 - [ ] It reads well at 360 × 180 as well as 640 × 320, and nothing needs to scroll
 - [ ] If it takes the keyboard, Escape releases it
 - [ ] `version` is bumped if this changes an existing widget

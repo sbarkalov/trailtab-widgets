@@ -106,12 +106,16 @@
       '</div>'
   }
 
-  draw()
-  // A tab can stay open across a night. Half an hour is finer than any figure
-  // shown here changes.
-  setInterval(draw, 30 * 60 * 1000)
+  // Started the way every widget starts. The protocol answers even though this
+  // code was delivered after the panel sent the message, so there is one way to
+  // write a widget rather than one per provenance.
+  TrailTabWidget.onInit(function () {
+    draw()
+    // A tab can stay open across a night. Half an hour is finer than any figure
+    // shown here changes.
+    setInterval(draw, 30 * 60 * 1000)
+  })
 
-  // Sizing is in viewport units, so a resize redraws itself; there is nothing
-  // for the size messages to do. `onInit` in particular never fires for a
-  // library widget: the shell answers `init` before this script is delivered.
+  // Sizing is in viewport units, so a resize redraws itself: the box is never
+  // read here, and the size messages have nothing to do.
 })()
