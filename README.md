@@ -35,6 +35,16 @@ npm test         # the check's own tests
 node scripts/library.mjs allowlist <path/to/trailtab/public/manifest.json>
 ```
 
+## Publishing, and how to check it landed
+
+`npm run publish` names the current commit; committing that is what publishes it. The extension reads the pin from `raw.githubusercontent.com`, which caches for five minutes — **per content encoding**. A plain `curl` asks for an uncompressed copy and a browser asks for a compressed one, and those are separate objects at the edge that expire independently, so check the way a browser asks:
+
+```bash
+curl -s --compressed https://raw.githubusercontent.com/sbarkalov/trailtab-widgets/main/pin.json
+```
+
+After that, a profile picks the new state up at its next daily refresh.
+
 ## License
 
 [MIT](LICENSE). By opening a pull request you agree that your widget is published under it. The license covers the code only: images, text and data a widget shows remain under the terms of wherever they come from.
