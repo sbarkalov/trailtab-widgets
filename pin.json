@@ -1,5 +1,5 @@
 {
-  "commit": "d54e67eaa2d1ac0d895d1abcab766d9dcc066096",
-  "movedAt": "2026-09-21T13:41:51.000Z",
+  "commit": "7b94586c6a3a3a2734890c0cf379d8f0064ed9eb",
+  "movedAt": "2026-09-22T00:00:00.000Z",
   "note": "The state the extension reads. A merge lists a widget; moving this publishes it."
 }
