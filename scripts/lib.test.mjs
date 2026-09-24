@@ -113,8 +113,32 @@ test('rotatable is carried into the listing only when stated', () => {
 test('new code needs a new version, and a new version needs new code', () => {
   const was = { id: 'clock', version: '1.0.0', sha256: 'a' }
   assert.match(checkAgainstBase([{ ...was, sha256: 'b' }], [was]).join(), /still 1.0.0/)
-  assert.match(checkAgainstBase([{ ...was, version: '1.0.1' }], [was]).join(), /did not change/)
+  assert.match(checkAgainstBase([{ ...was, version: '1.0.1' }], [was]).join(), /neither the code nor its data changed/)
   assert.deepEqual(checkAgainstBase([{ ...was, sha256: 'b', version: '1.1.0' }], [was]), [])
+})
+
+// The data is part of what a version names: a cached widget keeps its data
+// until the version moves, as it keeps its code.
+test('new data needs a new version too', () => {
+  const was = { id: 'words', version: '1.0.0', sha256: 'a', data: { file: 'w.txt', sha256: 'x' } }
+  const now = { ...was, data: { ...was.data, sha256: 'y' } }
+  assert.match(checkAgainstBase([now], [was]).join(), /still 1.0.0/)
+  assert.deepEqual(checkAgainstBase([{ ...now, version: '1.0.1' }], [was]), [])
+})
+
+test('a data file and bundled are declared, and a script is not data', () => {
+  assert.deepEqual(checkMeta(meta({ data: 'words.txt', bundled: true }), 'clock'), [])
+  for (const bad of ['words.js', 'words.mjs', '../words.txt', 'sub/words.txt', 'Words.TXT', 42]) {
+    assert.match(checkMeta(meta({ data: bad }), 'clock').join(), /"data"/, String(bad))
+  }
+  assert.match(checkMeta(meta({ bundled: 'yes' }), 'clock').join(), /"bundled"/)
+})
+
+test('the listing carries the data file and its digest, and bundled only when true', () => {
+  const e = listingEntry(meta({ data: 'words.txt', bundled: true }), 'widgets/clock/widget.js', enc('1'), enc('apple'))
+  assert.deepEqual(e.data, { file: 'widgets/clock/words.txt', sha256: sha256Hex(enc('apple')) })
+  assert.equal(e.bundled, true)
+  assert.equal('bundled' in listingEntry(meta({ bundled: false }), 'f', enc('1')), false)
 })
 
 test('the allowlist is read out of the sandbox CSP', () => {

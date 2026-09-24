@@ -19,6 +19,7 @@ import {
   checkSource,
   listingEntry,
   renderListing,
+  MAX_DATA_BYTES,
 } from './lib.mjs'
 
 const ROOT = new URL('..', import.meta.url).pathname
@@ -40,9 +41,7 @@ function readWidgets() {
     const problems = []
     const notes = []
     const files = readdirSync(path).sort()
-    const extra = files.filter((f) => !EXPECTED_FILES.includes(f))
     const missing = EXPECTED_FILES.filter((f) => !files.includes(f))
-    for (const f of extra) problems.push(`unexpected file ${f}: a widget is one script`)
     for (const f of missing) problems.push(`missing ${f}`)
     if (missing.length) {
       results.push({ name: dir.name, problems, notes })
@@ -59,6 +58,23 @@ function readWidgets() {
     }
     problems.push(...checkMeta(meta, dir.name))
 
+    // The one file beyond the script and its declaration is the data file the
+    // declaration names, and only that one.
+    const dataName = typeof meta.data === 'string' ? meta.data : null
+    const extra = files.filter((f) => !EXPECTED_FILES.includes(f) && f !== dataName)
+    for (const f of extra) problems.push(`unexpected file ${f}: a widget is one script, and at most one data file it names`)
+    let dataBytes
+    if (dataName) {
+      if (!files.includes(dataName)) {
+        problems.push(`"data" names ${dataName}, which is not in the folder`)
+      } else {
+        dataBytes = readFileSync(join(path, dataName))
+        if (dataBytes.length > MAX_DATA_BYTES) {
+          problems.push(`${dataName} is ${dataBytes.length} bytes; a data file is at most ${MAX_DATA_BYTES}`)
+        }
+      }
+    }
+
     const bytes = readFileSync(join(path, 'widget.js'))
     const source = new TextDecoder().decode(bytes)
     if (problems.length === 0) {
@@ -71,7 +87,7 @@ function readWidgets() {
       name: dir.name,
       problems,
       notes,
-      entry: problems.length === 0 ? listingEntry(meta, file, bytes) : undefined,
+      entry: problems.length === 0 ? listingEntry(meta, file, bytes, dataBytes) : undefined,
     })
   }
   return results

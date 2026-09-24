@@ -12,10 +12,27 @@
 import { createHash } from 'node:crypto'
 
 /** Mirrors `MAX_WIDGET_BYTES` in the extension. The whole file, comments included. */
-export const MAX_WIDGET_BYTES = 8 * 1024
+export const MAX_WIDGET_BYTES = 16 * 1024
+
+/** Mirrors `MAX_DATA_BYTES` in the extension: one data file, read as text, never run. */
+export const MAX_DATA_BYTES = 64 * 1024
 
 /** The fields `widget.json` may carry. Anything else is a typo or a wish. */
-const META_FIELDS = new Set(['id', 'title', 'version', 'interactive', 'contacts', 'rotatable'])
+const META_FIELDS = new Set([
+  'id',
+  'title',
+  'version',
+  'interactive',
+  'contacts',
+  'rotatable',
+  'data',
+  'bundled',
+])
+
+// A data file's name: a plain file in the widget's own folder. Not a script —
+// data is handed to the widget as text and never run, and a `.js` here would be
+// code carried under the data bound, which is four times the code one.
+const DATA_NAME = /^[a-z0-9][a-z0-9_-]*\.(txt|json|csv|tsv)$/
 
 /**
  * Fields the extension accepts and ignores. Refused here rather than passed
@@ -90,6 +107,14 @@ export function checkMeta(meta, dirName) {
   }
   if (meta.rotatable !== undefined && typeof meta.rotatable !== 'boolean') {
     problems.push('"rotatable", if present, must be true or false')
+  }
+  // Declares that the extension ships this widget. Nothing at runtime reads it;
+  // the extension's own bundle manifest decides, and refuses to disagree.
+  if (meta.bundled !== undefined && typeof meta.bundled !== 'boolean') {
+    problems.push('"bundled", if present, must be true or false')
+  }
+  if (meta.data !== undefined && (typeof meta.data !== 'string' || !DATA_NAME.test(meta.data))) {
+    problems.push('"data", if present, must name a .txt, .json, .csv or .tsv file in the widget\'s folder')
   }
   // Absent is not an answer; null is. And the extension still reads a bare
   // string for widgets published before lists existed, but nothing new needs
@@ -195,7 +220,7 @@ export function sha256Hex(bytes) {
 }
 
 /** One listing entry, fields in a fixed order so the file diffs cleanly. */
-export function listingEntry(meta, file, bytes) {
+export function listingEntry(meta, file, bytes, dataBytes) {
   const entry = {
     id: meta.id,
     title: meta.title,
@@ -206,6 +231,10 @@ export function listingEntry(meta, file, bytes) {
     contacts: meta.contacts,
   }
   if (meta.rotatable !== undefined) entry.rotatable = meta.rotatable
+  if (meta.data !== undefined) {
+    entry.data = { file: file.replace(/[^/]+$/, meta.data), sha256: sha256Hex(dataBytes) }
+  }
+  if (meta.bundled === true) entry.bundled = true
   return entry
 }
 
@@ -228,11 +257,14 @@ export function checkAgainstBase(entries, baseEntries) {
   for (const e of entries) {
     const was = base.get(e.id)
     if (!was) continue
-    if (was.sha256 !== e.sha256 && was.version === e.version) {
-      problems.push(`${e.id}: the code changed but the version is still ${e.version}`)
+    // The data is part of what a version names: a cached widget keeps its data
+    // until the version moves, exactly as it keeps its code.
+    const changed = was.sha256 !== e.sha256 || was.data?.sha256 !== e.data?.sha256
+    if (changed && was.version === e.version) {
+      problems.push(`${e.id}: the code or its data changed but the version is still ${e.version}`)
     }
-    if (was.sha256 === e.sha256 && was.version !== e.version) {
-      problems.push(`${e.id}: the version moved to ${e.version} but the code did not change`)
+    if (!changed && was.version !== e.version) {
+      problems.push(`${e.id}: the version moved to ${e.version} but neither the code nor its data changed`)
     }
   }
   return problems

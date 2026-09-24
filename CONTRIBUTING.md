@@ -4,7 +4,7 @@ A widget is a small program that strangers' browsers will run without having rea
 
 ## What a widget is here
 
-**One JavaScript file** — not an HTML page. The extension hands your file, as text, to a sandboxed shell page that already contains `TrailTabWidget` (the protocol) and nothing else, and the shell runs it as a script. Your code builds its own DOM inside `document.body` and adds its own `<style>` to `document.head`. A file that begins with markup is refused, because in the shell it is a syntax error that shows as an empty frame.
+**One JavaScript file**, at most **16 KB** counting every byte, comments included — not an HTML page. The extension hands your file, as text, to a sandboxed shell page that already contains `TrailTabWidget` (the protocol) and nothing else, and the shell runs it as a script. Your code builds its own DOM inside `document.body` and adds its own `<style>` to `document.head`. A file that begins with markup is refused, because in the shell it is a syntax error that shows as an empty frame.
 
 The shell is dark-on-transparent: `body` has a transparent background, `color: #e8ecf5` and `font-family: system-ui`. Draw for that.
 
@@ -13,6 +13,7 @@ The shell is dark-on-transparent: `body` has a transparent background, `color: #
 - **No extension APIs and no user data.** The frame is sandboxed without `allow-same-origin`; `chrome` is undefined and `parent.document` throws. A widget that needs bookmarks, tabs, history or settings cannot be a community widget, and asking will not change that.
 - **Only allowlisted destinations.** `fetch`, images and audio reach only the hosts in [`allowlist.json`](allowlist.json), which mirrors the extension's sandbox CSP. A new destination needs an extension release, so propose one only if the destination itself is worth it.
 - **No remote code.** `<script src>` to anywhere fails. Everything you run is in your one file.
+- **One data file, if you need one.** A word list, a table — something that is data, not code — may sit beside `widget.js` and be named in `widget.json` as `data`. It is verified against its digest like your script and handed to you as text in `TrailTabWidget.data`; it is never run. `.txt`, `.json`, `.csv` or `.tsv`; at most **64 KB**. Parse it yourself, and if it is `null` — an extension older than data files drew you — say so with `TrailTabWidget.fail()` rather than drawing nothing.
 - **No opening pages.** A link inside the frame opens nothing. Call `TrailTabWidget.source(url)` with the page for what is on screen, and the panel offers it — only at a host you declared.
 - **Say it failed** with `TrailTabWidget.fail(message)` when you cannot render around a problem.
 
@@ -42,10 +43,12 @@ The frame is **640 × 320**, or **360 × 180** on a narrow window — both 2:1, 
 |---|---|---|
 | `id` | yes | What the widget shows, in plain English words: `moon-phase`, `word-of-the-day`, `tide-times`. Lowercase, hyphenated, the same as the directory. **Permanent** — see below. |
 | `title` | yes | The name shown with the frame. |
-| `version` | yes | `MAJOR.MINOR.PATCH`. **Bump it whenever `widget.js` changes** — a cached widget is kept until its version moves, so new code under an old version reaches nobody who already has it. The check enforces this in both directions. |
+| `version` | yes | `MAJOR.MINOR.PATCH`. **Bump it whenever `widget.js` or its data file changes** — a cached widget is kept until its version moves, so new code under an old version reaches nobody who already has it. The check enforces this in both directions. |
 | `interactive` | yes | `true` if it wants the keyboard once activated. It does not affect whether it is drawn. |
 | `contacts` | yes | **Every** host the widget can put the user in front of — fetched, drawn as an image, or linked to through `source()`. `null` if it reaches nothing. It is what the user is shown before consenting. |
 | `rotatable` | no | `false` keeps it out of the random draw — for a widget the draw would spoil: session state, metered cost, slowness. Never because it is interactive. |
+| `data` | no | The name of your one data file, in the widget's folder: `"words.txt"`. See above. |
+| `bundled` | no | `true` for a widget the extension ships in its own package. Set by maintainers, not by contributors: it states what a release contains and does nothing at runtime — the extension decides what it ships, and refuses to disagree with this flag. A change to a bundled widget reaches users with the next extension release. |
 
 ### Choosing the id
 
