@@ -67,7 +67,7 @@ if (!WORD_ANSWERS || !WORD_GUESSES) TrailTabWidget.fail('The word list did not a
 // Six tries at a five-letter word. Not named after any published version: the
 // mechanic is not ownable, a name is.
 //
-// Two lists, from SCOWL — see words.js for its licence notice. What is fair to
+// Two lists, from SCOWL — see words.txt, the data file, for its licence notice. What is fair to
 // *ask* is a much smaller set than what is acceptable to *offer*, so answers
 // come from the common band and guesses from a wider one. A non-word is refused
 // without spending a try: a try lost to a typo is the worst this game can do.

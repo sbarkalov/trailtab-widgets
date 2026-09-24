@@ -115,9 +115,9 @@
     {
       "id": "wordguess",
       "title": "Five letters",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/wordguess/widget.js",
-      "sha256": "3bc8428b4ad71bf05596fd400e2d98a7559f62733fe7f0651e6b80d1df4f44b6",
+      "sha256": "d56c55b099e5121604fa37a63a905c4eb0f9e446bb2536c2c0a1e3a6afcb9b3b",
       "interactive": true,
       "contacts": null,
       "data": {

@@ -1,7 +1,7 @@
 {
   "id": "wordguess",
   "title": "Five letters",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": true,
   "contacts": null,
   "data": "words.txt",
