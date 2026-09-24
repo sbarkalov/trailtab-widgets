@@ -6,6 +6,8 @@ A widget is a small program that strangers' browsers will run without having rea
 
 **One JavaScript file**, at most **16 KB** counting every byte, comments included — not an HTML page. The extension hands your file, as text, to a sandboxed shell page that already contains `TrailTabWidget` (the protocol) and nothing else, and the shell runs it as a script. Your code builds its own DOM inside `document.body` and adds its own `<style>` to `document.head`. A file that begins with markup is refused, because in the shell it is a syntax error that shows as an empty frame.
 
+**Start from an example.** The widgets marked `bundled` are the ones the extension ships, written to this same format — read one close to what you are making before writing your own. See the README for which shows what.
+
 The shell is dark-on-transparent: `body` has a transparent background, `color: #e8ecf5` and `font-family: system-ui`. Draw for that.
 
 ## What your code can and cannot do

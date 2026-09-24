@@ -4,6 +4,10 @@ Community widgets for TrailTab, a new-tab extension for Chrome. (The extension's
 
 Everything in this repository is public and is read by the extension from a CDN. Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a widget. The extension's privacy policy is [PRIVACY.md](PRIVACY.md).
 
+## The widgets the extension ships live here too
+
+Nine of the widgets in `widgets/` are marked `"bundled": true`: Weather, A picture, Picture of the day, A work of art, An image from space, Word of the day, Tetris, Five letters and Minesweeper. They are the extension's own — it ships a copy of each, so they work offline and without the consent a library widget waits for — and this is where their source lives. Propose a change to one the way you would to any widget; it reaches users with the next extension release rather than the next pin move. They are also the best examples of the format: a widget that fetches (`weather`, `art`), one that names what it shows (`potd`, `space`), one with a control (`wordday`), games that take the keyboard (`tetris`, `minesweeper`), and one with a data file (`wordguess`).
+
 ## How a widget gets from here to a new tab
 
 1. **A pull request** adds `widgets/<id>/widget.js` and `widgets/<id>/widget.json`, plus the regenerated `library.json`.
