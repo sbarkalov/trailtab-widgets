@@ -1,0 +1,12 @@
+{
+  "id": "potd",
+  "title": "Picture of the day",
+  "version": "1.0.0",
+  "interactive": false,
+  "contacts": [
+    "api.wikimedia.org",
+    "thumb.wikimedia.org",
+    "commons.wikimedia.org"
+  ],
+  "bundled": true
+}

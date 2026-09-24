@@ -1,0 +1,15 @@
+{
+  "id": "art",
+  "title": "A work of art",
+  "version": "1.0.0",
+  "interactive": false,
+  "contacts": [
+    "openaccess-api.clevelandart.org",
+    "openaccess-cdn.clevelandart.org",
+    "clevelandart.org",
+    "collectionapi.metmuseum.org",
+    "images.metmuseum.org",
+    "www.metmuseum.org"
+  ],
+  "bundled": true
+}

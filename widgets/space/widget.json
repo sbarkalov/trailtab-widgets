@@ -1,0 +1,12 @@
+{
+  "id": "space",
+  "title": "An image from space",
+  "version": "1.0.0",
+  "interactive": false,
+  "contacts": [
+    "images-api.nasa.gov",
+    "images-assets.nasa.gov",
+    "images.nasa.gov"
+  ],
+  "bundled": true
+}

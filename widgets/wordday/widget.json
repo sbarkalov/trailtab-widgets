@@ -1,0 +1,11 @@
+{
+  "id": "wordday",
+  "title": "Word of the day",
+  "version": "1.0.0",
+  "interactive": true,
+  "contacts": [
+    "en.wiktionary.org",
+    "upload.wikimedia.org"
+  ],
+  "bundled": true
+}

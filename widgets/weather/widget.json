@@ -1,0 +1,10 @@
+{
+  "id": "weather",
+  "title": "Weather",
+  "version": "1.0.0",
+  "interactive": false,
+  "contacts": [
+    "wttr.in"
+  ],
+  "bundled": true
+}

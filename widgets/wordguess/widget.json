@@ -1,0 +1,9 @@
+{
+  "id": "wordguess",
+  "title": "Five letters",
+  "version": "1.0.0",
+  "interactive": true,
+  "contacts": null,
+  "data": "words.txt",
+  "bundled": true
+}

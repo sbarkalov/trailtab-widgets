@@ -1,0 +1,11 @@
+{
+  "id": "picture",
+  "title": "A picture",
+  "version": "1.0.0",
+  "interactive": false,
+  "contacts": [
+    "picsum.photos",
+    "fastly.picsum.photos"
+  ],
+  "bundled": true
+}

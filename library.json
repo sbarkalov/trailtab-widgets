@@ -1,6 +1,33 @@
 {
   "widgets": [
     {
+      "id": "art",
+      "title": "A work of art",
+      "version": "1.0.0",
+      "file": "widgets/art/widget.js",
+      "sha256": "998ae4c4f6aa55f1da9e5c4afb804ef62a6c53d5fe8aba9657892b6e17687bc0",
+      "interactive": false,
+      "contacts": [
+        "openaccess-api.clevelandart.org",
+        "openaccess-cdn.clevelandart.org",
+        "clevelandart.org",
+        "collectionapi.metmuseum.org",
+        "images.metmuseum.org",
+        "www.metmuseum.org"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "minesweeper",
+      "title": "Minesweeper",
+      "version": "1.0.0",
+      "file": "widgets/minesweeper/widget.js",
+      "sha256": "c1c6a69102334d2b640d4df24daa61f86d5c26d7419a78d1c0e4736a4388f9dc",
+      "interactive": true,
+      "contacts": null,
+      "bundled": true
+    },
+    {
       "id": "moon-phase",
       "title": "The moon tonight",
       "version": "1.2.0",
@@ -8,6 +35,96 @@
       "sha256": "ff834eea87fdc423141737fe2fcdc3dfff2c52e6d0e47c5d9c3261d379db4340",
       "interactive": false,
       "contacts": null
+    },
+    {
+      "id": "picture",
+      "title": "A picture",
+      "version": "1.0.0",
+      "file": "widgets/picture/widget.js",
+      "sha256": "0050a3f3624fc42e28e5db0b891da33ee19302699473806938ae6f5ded78813f",
+      "interactive": false,
+      "contacts": [
+        "picsum.photos",
+        "fastly.picsum.photos"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "potd",
+      "title": "Picture of the day",
+      "version": "1.0.0",
+      "file": "widgets/potd/widget.js",
+      "sha256": "dcfab18e5a2b2ec974e035fba31f71be6eaaa72935e678855d9de12171f954b4",
+      "interactive": false,
+      "contacts": [
+        "api.wikimedia.org",
+        "thumb.wikimedia.org",
+        "commons.wikimedia.org"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "space",
+      "title": "An image from space",
+      "version": "1.0.0",
+      "file": "widgets/space/widget.js",
+      "sha256": "c2680a9e6c2d5128fcd61b2e1c7909268de5b12ebcd2138fff72b722ff8124df",
+      "interactive": false,
+      "contacts": [
+        "images-api.nasa.gov",
+        "images-assets.nasa.gov",
+        "images.nasa.gov"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "tetris",
+      "title": "Tetris",
+      "version": "1.0.0",
+      "file": "widgets/tetris/widget.js",
+      "sha256": "83d1fbced2851ff497c48e5123f80af369066eb011ddadf0ebce05ba40665f4a",
+      "interactive": true,
+      "contacts": null,
+      "bundled": true
+    },
+    {
+      "id": "weather",
+      "title": "Weather",
+      "version": "1.0.0",
+      "file": "widgets/weather/widget.js",
+      "sha256": "cf9863550bb5e24abddba2459c2b6ad6b8cc0ba905ab893a1b1610b01c1910e5",
+      "interactive": false,
+      "contacts": [
+        "wttr.in"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "wordday",
+      "title": "Word of the day",
+      "version": "1.0.0",
+      "file": "widgets/wordday/widget.js",
+      "sha256": "e2e9bb0eebf23a524e30858bbc38fd916e508fda989037e910bdaab64fb431c3",
+      "interactive": true,
+      "contacts": [
+        "en.wiktionary.org",
+        "upload.wikimedia.org"
+      ],
+      "bundled": true
+    },
+    {
+      "id": "wordguess",
+      "title": "Five letters",
+      "version": "1.0.0",
+      "file": "widgets/wordguess/widget.js",
+      "sha256": "3bc8428b4ad71bf05596fd400e2d98a7559f62733fe7f0651e6b80d1df4f44b6",
+      "interactive": true,
+      "contacts": null,
+      "data": {
+        "file": "widgets/wordguess/words.txt",
+        "sha256": "610befd12db550353d0b583c518779997916bc75ce2e692c12caf78db67b9704"
+      },
+      "bundled": true
     }
   ]
 }
