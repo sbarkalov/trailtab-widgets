@@ -1,8 +1,8 @@
 # TrailTab widgets
 
-Community widgets for [TrailTab](https://github.com/sbarkalov/trailtab), a new-tab extension for Chrome. A widget here is drawn in the new tab's hero, at random, for people who have switched on **Community widgets**.
+Community widgets for TrailTab, a new-tab extension for Chrome. (The extension's own code is not public; this repository and its widgets are, under MIT.) A widget here is drawn in the new tab's hero, at random, for people who have switched on **Community widgets**.
 
-Everything in this repository is public and is read by the extension from a CDN. Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a widget.
+Everything in this repository is public and is read by the extension from a CDN. Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a widget. The extension's privacy policy is [PRIVACY.md](PRIVACY.md).
 
 ## How a widget gets from here to a new tab
 
