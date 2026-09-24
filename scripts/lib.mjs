@@ -177,7 +177,7 @@ export function checkSource(source, meta, allowlist, bytes) {
   for (const h of declared) {
     if (!found.includes(h)) problems.push(`declares ${h}, which the source never names`)
   }
-  const permitted = new Set([...allowlist.connect, ...allowlist.img])
+  const permitted = new Set([...allowlist.connect, ...allowlist.img, ...(allowlist.media ?? [])])
   for (const h of found) {
     if (!permitted.has(h)) {
       notes.push(
@@ -250,5 +250,12 @@ export function allowlistFromCsp(csp) {
       .map((s) => new URL(s).hostname)
       .sort()
   }
-  return { connect: directive('connect-src'), img: directive('img-src') }
+  // Every directive that names a destination. The extension added media-src
+  // (for audio from Wikimedia) and this read only the first two, so the file
+  // meant to be the list of permitted destinations was missing one.
+  return {
+    connect: directive('connect-src'),
+    img: directive('img-src'),
+    media: directive('media-src'),
+  }
 }

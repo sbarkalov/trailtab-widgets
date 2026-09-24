@@ -11,7 +11,7 @@ The shell is dark-on-transparent: `body` has a transparent background, `color: #
 ## What your code can and cannot do
 
 - **No extension APIs and no user data.** The frame is sandboxed without `allow-same-origin`; `chrome` is undefined and `parent.document` throws. A widget that needs bookmarks, tabs, history or settings cannot be a community widget, and asking will not change that.
-- **Only allowlisted destinations.** `fetch` and images reach only the hosts in [`allowlist.json`](allowlist.json), which mirrors the extension's sandbox CSP. A new destination needs an extension release, so propose one only if the destination itself is worth it.
+- **Only allowlisted destinations.** `fetch`, images and audio reach only the hosts in [`allowlist.json`](allowlist.json), which mirrors the extension's sandbox CSP. A new destination needs an extension release, so propose one only if the destination itself is worth it.
 - **No remote code.** `<script src>` to anywhere fails. Everything you run is in your one file.
 - **No opening pages.** A link inside the frame opens nothing. Call `TrailTabWidget.source(url)` with the page for what is on screen, and the panel offers it — only at a host you declared.
 - **Say it failed** with `TrailTabWidget.fail(message)` when you cannot render around a problem.

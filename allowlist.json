@@ -14,5 +14,8 @@
     "openaccess-cdn.clevelandart.org",
     "picsum.photos",
     "thumb.wikimedia.org"
+  ],
+  "media": [
+    "upload.wikimedia.org"
   ]
 }

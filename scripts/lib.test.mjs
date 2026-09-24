@@ -119,6 +119,6 @@ test('new code needs a new version, and a new version needs new code', () => {
 
 test('the allowlist is read out of the sandbox CSP', () => {
   const csp =
-    "sandbox allow-scripts; script-src 'self'; connect-src https://a.org https://b.org; img-src 'self' data: https://c.org; child-src 'self';"
-  assert.deepEqual(allowlistFromCsp(csp), { connect: ['a.org', 'b.org'], img: ['c.org'] })
+    "sandbox allow-scripts; script-src 'self'; connect-src https://a.org https://b.org; img-src 'self' data: https://c.org; media-src https://d.org; child-src 'self';"
+  assert.deepEqual(allowlistFromCsp(csp), { connect: ['a.org', 'b.org'], img: ['c.org'], media: ['d.org'] })
 })

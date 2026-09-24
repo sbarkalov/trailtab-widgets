@@ -25,7 +25,7 @@ All of this is kept in Chrome's extension storage on your computer. None of it i
 - **Your settings** and **your favourite links.** These are kept in Chrome's *sync* storage, so if you use Chrome Sync, Chrome carries them to your other devices through your Google account, as it does for any extension's settings. TrailTab itself does not send them anywhere.
 - **A record of recent saves** (the last 200): the address of each page you saved from the toolbar button, the folder suggested and the folder chosen. It exists so you can see, in Settings → Diagnostics, how often the suggestion was right.
 - **A record of recent summaries** (the last 200): how long each took and how it ended. It holds nothing about the page itself.
-- **A record of recent group unloads** (the last 20), only if you switched that feature on: the addresses and titles of the tabs that were unloaded, so they can be found again if the browser closes unexpectedly.
+- **A record of your last 20 group unloads**, only if you switched that feature on: for each, the addresses and titles of that group's tabs, however many there were. It is shown in Settings → Diagnostics, so that if the browser closes unexpectedly there is a record of what those tabs were.
 - **Widgets from the library**, once downloaded, so they are not fetched again every time.
 - **Which bookmark folders you had open**, and similar display state.
 
@@ -35,13 +35,7 @@ Removing the extension removes all of it.
 
 TrailTab makes none unless you ask for something that needs one.
 
-**Community widgets** (off by default). When you switch on *Community widgets*, the new tab page may show widgets that fetch content from public services. The address of each service is shown next to the widget, and listed in Settings. The requests are made directly from your browser, so each service sees your IP address, as it would if you visited it:
-
-- **wttr.in** — the weather widget. Given no place, wttr.in estimates your location from your IP address; TrailTab does not send one.
-- **picsum.photos** — a random photograph.
-- **Wikimedia** (api.wikimedia.org, thumb.wikimedia.org, upload.wikimedia.org, commons.wikimedia.org) and **Wiktionary** (en.wiktionary.org) — the picture and word of the day.
-- **The Cleveland Museum of Art** and **The Metropolitan Museum of Art** — works of art.
-- **NASA** (images-api.nasa.gov, images-assets.nasa.gov) — space images.
+**Community widgets** (off by default). When you switch on *Community widgets*, the new tab page may show widgets that fetch content — weather, pictures, art, space images, words — from public services. Each widget names the services it reaches, on screen, next to the widget. The requests are made directly from your browser, so each service sees your IP address, as it would if you visited it. Widgets can reach only the services the extension permits; **the complete current list is [`allowlist.json`](allowlist.json)** in this repository, and it changes only with a new release of the extension. One deserves a note: **wttr.in**, used by the weather widget, estimates your location from your IP address when given no place — TrailTab does not send one.
 
 The same switch lets TrailTab fetch new widgets from this repository: a small file from **raw.githubusercontent.com** says which version to use, and the widgets themselves come from **cdn.jsdelivr.net**. Nothing about you is sent with these requests beyond what any browser request carries. Every widget is checked against a published fingerprint before it runs, and runs in a sandbox with no access to your bookmarks, reading list, tabs, or anything else of yours.
 
