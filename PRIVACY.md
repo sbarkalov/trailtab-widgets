@@ -9,6 +9,7 @@ Effective 24 September 2026. Applies to the TrailTab extension for Chrome.
 | What | Why | Where it goes |
 |---|---|---|
 | **The address of the tab you are on** (the `tabs` permission) | To mark the toolbar icon with ★ when the page is bookmarked, or with its reading-list state. The address is checked against your bookmarks and reading list and then discarded. | Nowhere. It is not stored. |
+| **Your open tabs' addresses and when each was last used** (the same `tabs` permission) | When you open a new tab: to find a page you have left open for a week or more and saved nowhere, and offer to add it to your reading list. The addresses are checked against your bookmarks and reading list and then discarded. | Nowhere. Only the addresses of pages you answered *Not now* for are kept, on your device, so they are not offered again. |
 | **Your bookmarks** (`bookmarks`) | To show them on the new tab page (including the panel that brings back an old bookmark), and to suggest a folder when you save a page. The suggestion is calculated in your browser from your own folders; it uses no AI model and no network. | Nowhere. |
 | **Your reading list** (`readingList`) | To show it on the new tab page and to add pages to it. | Nowhere. |
 | **Your most visited sites** (`topSites`) | To offer them as favourites on the new tab page. | Nowhere. |
@@ -16,7 +17,7 @@ Effective 24 September 2026. Applies to the TrailTab extension for Chrome.
 | **The text of the page you are on** (`activeTab`, `scripting`) | Only when you press *Summarize this page*: the text is handed to the summarization model built into Chrome, which runs on your device. | Nowhere. The model is local. |
 | **Site icons** (`favicon`) | To show a site's icon next to its link, from Chrome's own icon cache. | Nowhere. |
 
-The warning Chrome shows at installation — *"Read your browsing history"* — is how Chrome describes the `tabs` permission, because access to tab addresses *could* be used to build a history. TrailTab uses it for the toolbar mark above, and keeps no record of the pages you visit.
+The warning Chrome shows at installation — *"Read your browsing history"* — is how Chrome describes the `tabs` permission, because access to tab addresses *could* be used to build a history. TrailTab uses it for the toolbar mark and the old-tab suggestion above, and keeps no record of the pages you visit.
 
 ## What TrailTab stores on your device
 
@@ -27,6 +28,7 @@ All of this is kept in Chrome's extension storage on your computer. None of it i
 - **A record of recent summaries** (the last 200): how long each took and how it ended. It holds nothing about the page itself.
 - **A record of your last 20 group unloads**, only if you switched that feature on: for each, the addresses and titles of that group's tabs, however many there were. It is shown in Settings → Diagnostics, so that if the browser closes unexpectedly there is a record of what those tabs were.
 - **Widgets from the library**, once downloaded, so they are not fetched again every time.
+- **Your answers to the new tab's suggestions**: the pairs of duplicate folders you chose to keep, and the addresses of old tabs you said *Not now* to (the last 200), with counts of how often each suggestion was taken — shown in Settings → Diagnostics.
 - **Which bookmark folders you had open**, and similar display state.
 
 Removing the extension removes all of it.
