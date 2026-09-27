@@ -8,7 +8,17 @@ A widget is a small program that strangers' browsers will run without having rea
 
 **Start from an example.** The widgets marked `bundled` are the ones the extension ships, written to this same format — read one close to what you are making before writing your own. See the README for which shows what.
 
-The shell is dark-on-transparent: `body` has a transparent background, `color: #e8ecf5` and `font-family: system-ui`. Draw for that.
+The frame is transparent: you draw on the new tab's own ground, which is light or dark as the user chose. **Take your colours from the page** — the shell sets them on your document before your code runs:
+
+| | |
+|---|---|
+| `--tt-fg` | primary text |
+| `--tt-fg-muted` | secondary text (translucent) |
+| `--tt-accent` | the page's accent |
+| `--tt-line` | borders and dividers |
+| `data-tt-scheme` on `<html>` | `light` or `dark` |
+
+Write them with a fallback, `color: var(--tt-fg, #e8ecf5)`: an extension older than this sends none, and the fallback is what you draw in there — the dark page's colours, which is what the shell used to assume. Tint a surface by mixing the text colour rather than white (`color-mix(in srgb, var(--tt-fg, #fff) 8%, transparent)`), so it reads on both grounds. Colours that *mean* something — a game's pieces, a state — keep their hue and get a light-ground variant under `:root[data-tt-scheme='light']`. Drawing on a canvas, register `TrailTabWidget.onTheme(fn)` (see Lifecycle). `body` has `font-family: system-ui`.
 
 ## What your code can and cannot do
 
@@ -28,6 +38,7 @@ The frame is **640 × 320**, or **360 × 180** on a narrow window — both 2:1, 
 - **Start from `TrailTabWidget.onInit(fn)`.** It is called with `{ width, height }` — at once if the panel has already said so, which is always the case for a library widget, whose code is delivered after the shell answered that message. Drawing at the top level works too, but `onInit` is the one way that is right for every widget.
 - `onExpand(fn)` / `onCollapse(fn)` fire when the user activates your widget and when it loses the keyboard. They are **not** replayed: they report a moment, so one that passed before your code arrived is not announced to it.
 - **If you take the keyboard, release it on Escape** with `TrailTabWidget.releaseFocus()`.
+- `onTheme(fn)` is called with `{ scheme, fg, fgMuted, accent, line }` — at once if the panel has already said, and again whenever the user changes the theme. Only a widget that draws in script needs it; CSS written against the variables follows by itself. Guard it (`if (TrailTabWidget.onTheme)`) — an older extension has no such function — and redraw from it.
 
 ## `widget.json`
 
