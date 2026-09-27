@@ -6,7 +6,7 @@
   var style = document.createElement('style')
   style.textContent = `
   html, body { overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-  body { display: flex; color: #e8ecf5; background: transparent; }
+  body { display: flex; color: var(--tt-fg, #e8ecf5); background: transparent; }
   .wrap { display: flex; flex-direction: column; justify-content: center; width: 100%; height: 100%; padding: 0 14px; box-sizing: border-box; }
   .head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
   /* Sized down rather than wrapped: the curator picks phrases as well as
@@ -16,8 +16,8 @@
   .pos { font-style: italic; opacity: 0.6; }
   .ipa { opacity: 0.72; }
   /* Plays when asked, never on a draw. */
-  .say { font: inherit; font-size: clamp(11px, 1.8vw, 13px); color: inherit; background: rgba(255,255,255,0.09); border: 0; border-radius: 999px; padding: 2px 9px; cursor: pointer; }
-  .say:hover { background: rgba(255,255,255,0.16); }
+  .say { font: inherit; font-size: clamp(11px, 1.8vw, 13px); color: inherit; background: color-mix(in srgb, var(--tt-fg, #fff) 9%, transparent); border: 0; border-radius: 999px; padding: 2px 9px; cursor: pointer; }
+  .say:hover { background: color-mix(in srgb, var(--tt-fg, #fff) 16%, transparent); }
   /* Clipped by lines, not characters: a count lands mid-word. */
   .sense { margin-top: 9px; font-size: clamp(12.5px, 2.4vw, 16px); line-height: 1.45; opacity: 0.92; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; }
   .credit { margin-top: 10px; font-size: clamp(10.5px, 1.7vw, 12px); opacity: 0.55; }

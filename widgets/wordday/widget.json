@@ -1,7 +1,7 @@
 {
   "id": "wordday",
   "title": "Word of the day",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": true,
   "contacts": [
     "en.wiktionary.org",

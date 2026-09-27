@@ -1,7 +1,7 @@
 {
   "id": "art",
   "title": "A work of art",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": false,
   "contacts": [
     "openaccess-api.clevelandart.org",

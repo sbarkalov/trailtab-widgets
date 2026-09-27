@@ -6,7 +6,7 @@
   var style = document.createElement('style')
   style.textContent = `
   html, body { overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-  body { background: transparent; color: #e8ecf5; }
+  body { background: transparent; color: var(--tt-fg, #e8ecf5); }
   /* No ring around the whole widget: the panel says it is active by taking the
      cover away. Where the caret is it does not say — \`.at\` does. */
   .wrap { display: flex; gap: 10px; padding: 8px; height: 100%; box-sizing: border-box; outline: none; }
@@ -15,7 +15,7 @@
   .t {
     display: flex; align-items: center; justify-content: center;
     font-weight: 700; text-transform: uppercase;
-    background: rgba(255,255,255,.07); border-radius: 3px;
+    background: color-mix(in srgb, var(--tt-fg, #fff) 7%, transparent); border-radius: 3px;
     border-bottom: 3px solid transparent;
   }
   /* Colour is how this game is usually read, and not every player can read it.
@@ -27,23 +27,38 @@
   .ok  { background: rgba(127,214,163,.30); border-bottom-color: #7fd6a3; }
   .near{ background: rgba(255,212,121,.26);
          border-bottom-style: dashed; border-bottom-color: #ffd479; }
-  .no  { background: rgba(255,255,255,.03); opacity: .45; border-bottom-style: none; }
+  .no  { background: color-mix(in srgb, var(--tt-fg, #fff) 3%, transparent); opacity: .45; border-bottom-style: none; }
   /* The caret's cell, at two strengths for two questions: faint says where you
      are, lit says the keyboard actually arrived — which happens only when the
      panel hands it over, and is what looks broken before that. Inset, clear of
      the bottom border carrying the letter's state. */
-  .t.at { box-shadow: inset 0 0 0 2px #ffffff33; }
+  .t.at { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--tt-fg, #fff) 20%, transparent); }
   .wrap:focus .t.at { box-shadow: inset 0 0 0 2px #9fd8ff; background: #9fd8ff1f; }
   .side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   .bank { display: flex; flex-wrap: wrap; gap: 3px; align-content: flex-start; font-size: 11px; }
   .bank span { padding: 1px 4px; border-radius: 3px; text-transform: uppercase;
-               background: rgba(255,255,255,.07); border-bottom: 2px solid transparent; }
+               background: color-mix(in srgb, var(--tt-fg, #fff) 7%, transparent); border-bottom: 2px solid transparent; }
   /* The bank repeats the shapes, so a letter's state is readable twice and
      never only by hue. */
   .bank .ok { border-bottom-color: #7fd6a3; }
   .bank .near { border-bottom-style: dashed; border-bottom-color: #ffd479; }
   .bank .no { opacity: .35; text-decoration: line-through; }
   .strip { font-size: 11px; opacity: .75; margin-top: auto; }
+  /* A light page. The states keep their hues — green in place, amber in the
+     word — but dark enough to read on a light ground, with fills a light
+     ground shows; the caret takes the page's accent. The rules above stay the
+     dark page's and the fallback, so a panel that says nothing changes nothing. */
+  :root[data-tt-scheme='light'] .t { background: color-mix(in srgb, var(--tt-fg) 9%, transparent); }
+  :root[data-tt-scheme='light'] .ok { background: rgba(27,127,70,.20); border-bottom-color: #1b7f46; }
+  :root[data-tt-scheme='light'] .near { background: rgba(176,110,0,.20); border-bottom-color: #b06e00; }
+  :root[data-tt-scheme='light'] .no { background: color-mix(in srgb, var(--tt-fg) 4%, transparent); }
+  :root[data-tt-scheme='light'] .bank span { background: color-mix(in srgb, var(--tt-fg) 9%, transparent); }
+  :root[data-tt-scheme='light'] .bank .ok { background: color-mix(in srgb, var(--tt-fg) 9%, transparent); border-bottom-color: #1b7f46; }
+  :root[data-tt-scheme='light'] .bank .near { background: color-mix(in srgb, var(--tt-fg) 9%, transparent); border-bottom-color: #b06e00; }
+  :root[data-tt-scheme='light'] .wrap:focus .t.at {
+    box-shadow: inset 0 0 0 2px var(--tt-accent);
+    background: color-mix(in srgb, var(--tt-accent) 14%, transparent);
+  }
 `
   document.head.appendChild(style)
   document.body.insertAdjacentHTML('afterbegin', `<div class="wrap" id="wrap" tabindex="0">

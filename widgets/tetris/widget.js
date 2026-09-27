@@ -1,16 +1,20 @@
 // Tetris — a widget the extension ships, published here as its source.
 // Ported from a page of its own: the page set its styles and markup in HTML,
 // and here the script writes them, since the shell holds nothing but the
-// protocol. Everything below the preamble is the page's script, unchanged.
+// protocol. Everything below the preamble is the page's script, save the
+// colours it draws in, which follow the page (onTheme).
 ;(function () {
   var style = document.createElement('style')
   style.textContent = `
   html, body { /* Given a box, expected to fit it — a widget that overflows is clipped,
      never scrolled, because the panel around it cannot scroll either. */
     overflow: hidden; margin: 0; height: 100%; background: transparent;
-               font-family: system-ui, sans-serif; color: #e8ecf5; }
+               font-family: system-ui, sans-serif; color: var(--tt-fg, #e8ecf5); }
   body { display: flex; align-items: center; justify-content: center; gap: 14px; }
-  canvas { background: rgba(255,255,255,0.04); border-radius: 4px; display: block; }
+  canvas { background: color-mix(in srgb, var(--tt-fg, #fff) 4%, transparent); border-radius: 4px; display: block; }
+  /* A light ground shows a tint less than a dark one does; the well has to
+     read as a well on both. */
+  :root[data-tt-scheme='light'] canvas { background: color-mix(in srgb, var(--tt-fg) 7%, transparent); }
   /* A fixed width, because the pair is centred and the hint changes when play
      starts. Letting the panel size to its text moved the board sideways at the
      exact moment the user was about to use it. Wide enough for the playing
@@ -107,13 +111,30 @@ function rotate() {
   if (!hits(out, piece.x, piece.y)) piece.shape = out
 }
 
+// The two colours the board is drawn in. The dark pair is the original and the
+// fallback: under a panel that says nothing about the page, nothing changes.
+// On a light page the yellow piece all but vanishes, so there the page's own
+// accent marks the falling piece and its muted text the settled ones — both
+// chosen by the page to read on that ground.
+var ink = { settled: '#8d94a6', piece: '#f7ec13' }
+if (TrailTabWidget.onTheme) {
+  TrailTabWidget.onTheme(function (theme) {
+    ink = theme.scheme === 'light'
+      ? { settled: theme.fgMuted, piece: theme.accent }
+      : { settled: '#8d94a6', piece: '#f7ec13' }
+    // Told at once when the page has already said, which can be before the
+    // first board exists.
+    if (grid) draw()
+  })
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  ctx.fillStyle = '#8d94a6'
+  ctx.fillStyle = ink.settled
   for (var r = 0; r < ROWS; r++)
     for (var c = 0; c < COLS; c++)
       if (grid[r][c]) ctx.fillRect(c * cell + 1, r * cell + 1, cell - 2, cell - 2)
-  ctx.fillStyle = '#f7ec13'
+  ctx.fillStyle = ink.piece
   piece.shape.forEach(function (row, r) {
     row.forEach(function (v, c) {
       if (v) ctx.fillRect((piece.x + c) * cell + 1, (piece.y + r) * cell + 1, cell - 2, cell - 2)

@@ -3,9 +3,9 @@
     {
       "id": "art",
       "title": "A work of art",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/art/widget.js",
-      "sha256": "998ae4c4f6aa55f1da9e5c4afb804ef62a6c53d5fe8aba9657892b6e17687bc0",
+      "sha256": "a686058f9369687d891def64e4d9e850455ac1aa4a2644c696e0cab764d1d17d",
       "interactive": false,
       "contacts": [
         "openaccess-api.clevelandart.org",
@@ -20,9 +20,9 @@
     {
       "id": "minesweeper",
       "title": "Minesweeper",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/minesweeper/widget.js",
-      "sha256": "c1c6a69102334d2b640d4df24daa61f86d5c26d7419a78d1c0e4736a4388f9dc",
+      "sha256": "fc71f667a25da71f662a4b9465ef1e18e5084def007727059c2c68ee0e706570",
       "interactive": true,
       "contacts": null,
       "bundled": true
@@ -39,9 +39,9 @@
     {
       "id": "picture",
       "title": "A picture",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/picture/widget.js",
-      "sha256": "0050a3f3624fc42e28e5db0b891da33ee19302699473806938ae6f5ded78813f",
+      "sha256": "e9fba90f5e48b8deedcb196e70627e7533ab43466b1bea827affb1d7a3ef41ec",
       "interactive": false,
       "contacts": [
         "picsum.photos",
@@ -52,9 +52,9 @@
     {
       "id": "potd",
       "title": "Picture of the day",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/potd/widget.js",
-      "sha256": "dcfab18e5a2b2ec974e035fba31f71be6eaaa72935e678855d9de12171f954b4",
+      "sha256": "c9f6ba992db3358fd03caaad7a9b22d7cddd0e7cbbefbdd801f78f544ab79823",
       "interactive": false,
       "contacts": [
         "api.wikimedia.org",
@@ -66,9 +66,9 @@
     {
       "id": "space",
       "title": "An image from space",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/space/widget.js",
-      "sha256": "c2680a9e6c2d5128fcd61b2e1c7909268de5b12ebcd2138fff72b722ff8124df",
+      "sha256": "8f9820e57b1a5ae81723eb79130bd0a6f6a7df4a2d7b228e2af5518b65695aaa",
       "interactive": false,
       "contacts": [
         "images-api.nasa.gov",
@@ -80,9 +80,9 @@
     {
       "id": "tetris",
       "title": "Tetris",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/tetris/widget.js",
-      "sha256": "83d1fbced2851ff497c48e5123f80af369066eb011ddadf0ebce05ba40665f4a",
+      "sha256": "581bc7db5a32b2729fcc775cebbecb657e145947f2a5e8d41c8490eea17f2253",
       "interactive": true,
       "contacts": null,
       "bundled": true
@@ -90,9 +90,9 @@
     {
       "id": "weather",
       "title": "Weather",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/weather/widget.js",
-      "sha256": "cf9863550bb5e24abddba2459c2b6ad6b8cc0ba905ab893a1b1610b01c1910e5",
+      "sha256": "47b76ada9b860c3e608c9d1b67f636e5c9c7b0e76b89b30be8a26443246d226c",
       "interactive": false,
       "contacts": [
         "wttr.in"
@@ -102,9 +102,9 @@
     {
       "id": "wordday",
       "title": "Word of the day",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "file": "widgets/wordday/widget.js",
-      "sha256": "e2e9bb0eebf23a524e30858bbc38fd916e508fda989037e910bdaab64fb431c3",
+      "sha256": "a6e4b6562ce8cef5e98a3f56a2654efd71762de3851fe03e1f6e0001fb23f3c7",
       "interactive": true,
       "contacts": [
         "en.wiktionary.org",
@@ -115,9 +115,9 @@
     {
       "id": "wordguess",
       "title": "Five letters",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "file": "widgets/wordguess/widget.js",
-      "sha256": "d56c55b099e5121604fa37a63a905c4eb0f9e446bb2536c2c0a1e3a6afcb9b3b",
+      "sha256": "51b231eeb4c218806823bb8986e1ead0b0ee881f37f95f94e5ab9e3ead575b37",
       "interactive": true,
       "contacts": null,
       "data": {

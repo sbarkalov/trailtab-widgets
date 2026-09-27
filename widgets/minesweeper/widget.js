@@ -1,14 +1,15 @@
 // Minesweeper — a widget the extension ships, published here as its source.
 // Ported from a page of its own: the page set its styles and markup in HTML,
 // and here the script writes them, since the shell holds nothing but the
-// protocol. Everything below the preamble is the page's script, unchanged.
+// protocol. Everything below the preamble is the page's script, save the
+// colours it draws in, which follow the page (onTheme).
 ;(function () {
   var style = document.createElement('style')
   style.textContent = `
   html, body { overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
   body {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: transparent; color: #e8ecf5;
+    background: transparent; color: var(--tt-fg, #e8ecf5);
   }
   /* No focus ring: the panel says the widget is active by taking its cover
      away. Where the cursor is is a different question; the grid shows it. */
@@ -40,7 +41,38 @@ var over = null      // null | 'won' | 'lost'
 var cur = { x: 0, y: 0 }
 var showCursor = false
 
-var HUE = ['', '#7fb2ff', '#7fd6a3', '#ff9a8a', '#c8a6ff', '#ffd479', '#7fe0e0', '#e8ecf5', '#b0b6c4']
+// Everything the grid is drawn in. The numbers carry meaning, so they are not
+// the page's text colour: each count keeps its hue, and a light page gets the
+// same hues dark enough to read on it. The dark set is the original and the
+// fallback — under a panel that says nothing about the page, nothing changes.
+var DARK = {
+  hue: ['', '#7fb2ff', '#7fd6a3', '#ff9a8a', '#c8a6ff', '#ffd479', '#7fe0e0', '#e8ecf5', '#b0b6c4'],
+  open: 'rgba(255,255,255,.06)', closed: 'rgba(255,255,255,.14)',
+  flag: '#ffd479', mine: '#ff9a8a', cursor: '#e8ecf5',
+}
+function lightInk(theme) {
+  return {
+    hue: ['', '#1f5fd1', '#1b7f46', '#c0392b', '#6a3fc0', '#9a6400', '#0b7a7a', theme.fg, '#5b6170'],
+    // A light ground takes a tint of the page's own text, which is dark there.
+    open: mix(theme.fg, 0.05), closed: mix(theme.fg, 0.16),
+    flag: '#b86e00', mine: '#c0392b', cursor: theme.fg,
+  }
+}
+// `fg` is #rrggbb or rgba(); the canvas wants one colour with alpha.
+function mix(colour, a) {
+  var m = /^#(..)(..)(..)$/.exec(colour)
+  if (m) return 'rgba(' + parseInt(m[1], 16) + ',' + parseInt(m[2], 16) + ',' + parseInt(m[3], 16) + ',' + a + ')'
+  return colour.replace(/,\s*[\d.]+\)$/, ', ' + a + ')')
+}
+var ink = DARK
+if (TrailTabWidget.onTheme) {
+  TrailTabWidget.onTheme(function (theme) {
+    ink = theme.scheme === 'light' ? lightInk(theme) : DARK
+    // Told at once when the page has already said, which is before the first
+    // grid exists.
+    if (cells.length) draw()
+  })
+}
 
 function idx(x, y) { return y * COLS + x }
 function inside(x, y) { return x >= 0 && y >= 0 && x < COLS && y < ROWS }
@@ -159,7 +191,7 @@ function draw() {
       var py = y * cell
       var lost = over === 'lost'
 
-      ctx.fillStyle = c.open ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.14)'
+      ctx.fillStyle = c.open ? ink.open : ink.closed
       ctx.fillRect(px + 1, py + 1, cell - 2, cell - 2)
 
       ctx.font = Math.round(cell * 0.6) + 'px system-ui, sans-serif'
@@ -169,18 +201,18 @@ function draw() {
       var cy = py + cell / 2 + 1
 
       if (c.flag) {
-        ctx.fillStyle = '#ffd479'
+        ctx.fillStyle = ink.flag
         ctx.fillText('⚑', cx, cy)
       } else if (lost && c.mine) {
-        ctx.fillStyle = '#ff9a8a'
+        ctx.fillStyle = ink.mine
         ctx.fillText('✹', cx, cy)
       } else if (c.open && c.near) {
-        ctx.fillStyle = HUE[c.near]
+        ctx.fillStyle = ink.hue[c.near]
         ctx.fillText(String(c.near), cx, cy)
       }
 
       if (showCursor && cur.x === x && cur.y === y) {
-        ctx.strokeStyle = '#e8ecf5'
+        ctx.strokeStyle = ink.cursor
         ctx.lineWidth = 2
         ctx.strokeRect(px + 1, py + 1, cell - 2, cell - 2)
       }

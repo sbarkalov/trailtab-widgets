@@ -1,7 +1,7 @@
 {
   "id": "picture",
   "title": "A picture",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": false,
   "contacts": [
     "picsum.photos",

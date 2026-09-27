@@ -8,7 +8,7 @@
   html, body { /* Given a box, expected to fit it — a widget that overflows is clipped,
      never scrolled, because the panel around it cannot scroll either. */
     overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-  body { display: flex; align-items: center; justify-content: center; color: #e8ecf5; background: transparent; }
+  body { display: flex; align-items: center; justify-content: center; color: var(--tt-fg, #e8ecf5); background: transparent; }
   .wrap { text-align: center; line-height: 1.3; }
   .temp { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
   .place { font-size: 13px; opacity: 0.7; }

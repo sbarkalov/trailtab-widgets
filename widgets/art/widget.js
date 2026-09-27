@@ -6,7 +6,7 @@
   var style = document.createElement('style')
   style.textContent = `
   html, body { overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-  body { display: flex; color: #e8ecf5; background: transparent; }
+  body { display: flex; color: var(--tt-fg, #e8ecf5); background: transparent; }
   .wrap { display: flex; flex-direction: column; width: 100%; height: 100%; }
   /* Contained, never cropped. Re-framing a painting to fit a box is the one
      thing an art widget must not do. */

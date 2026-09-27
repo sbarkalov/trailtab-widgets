@@ -9,7 +9,7 @@
      never scrolled, because the panel around it cannot scroll either. */
     overflow: hidden; margin: 0; height: 100%; }
   body { display: flex; align-items: center; justify-content: center; background: transparent;
-         font-family: system-ui, sans-serif; color: #e8ecf5; }
+         font-family: system-ui, sans-serif; color: var(--tt-fg, #e8ecf5); }
   /* Fills the box it was given without distorting: the frame's proportions are
      the hero's, and the image's are its own. */
   img { width: 100%; height: 100%; object-fit: cover; display: block; }

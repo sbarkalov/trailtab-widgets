@@ -1,7 +1,7 @@
 {
   "id": "space",
   "title": "An image from space",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": false,
   "contacts": [
     "images-api.nasa.gov",

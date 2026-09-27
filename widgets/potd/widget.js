@@ -6,7 +6,7 @@
   var style = document.createElement('style')
   style.textContent = `
   html, body { overflow: hidden; margin: 0; height: 100%; font-family: system-ui, sans-serif; }
-  body { display: flex; color: #e8ecf5; background: transparent; }
+  body { display: flex; color: var(--tt-fg, #e8ecf5); background: transparent; }
   .wrap { display: flex; flex-direction: column; width: 100%; height: 100%; }
   /* The picture is never cropped. A photograph is someone's composition and a
      box is not a reason to re-frame it, so it is contained and the surplus is
@@ -17,7 +17,7 @@
      it would be legible or not depending on what the picture happens to be,
      and this credit is the condition on drawing the picture at all. */
   .credit { flex: 0 0 auto; padding: 6px 8px 0; font-size: 11px; line-height: 1.35; }
-  .title { color: #e8ecf5; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .title { color: var(--tt-fg, #e8ecf5); opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .by { opacity: 0.62; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .note { margin: auto; font-size: 13px; opacity: 0.7; padding: 0 16px; text-align: center; }
 `

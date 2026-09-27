@@ -1,7 +1,7 @@
 {
   "id": "weather",
   "title": "Weather",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "interactive": false,
   "contacts": [
     "wttr.in"
